@@ -3,26 +3,26 @@
 
 using namespace std;
 
-int neighbors(vector<bool> vec, int x, int y, int row, int col)
+int neighbors(vector<vector<bool>> vec, int y, int x, int row, int col)
 {
   int numNeighbors = 0;
-  col = col-1;
+  //col = col-1;
 
-  if(x != col && vec[(y)*row+(x+1)])
+  if(x != col && vec[x+1][y])
     numNeighbors++;
-  if(y != col && vec[(y+1)*row+x])
+  if(y != row && vec[x][y+1])
     numNeighbors++;
-  if(x != col && y != col && vec[(y+1)*row+(x+1)])
+  if(x != col && y != row && vec[x+1][y+1])
     numNeighbors++;
-  if(y != 0 && vec[(y-1)*row+x])
+  if(y != 0 && vec[x][y-1])
     numNeighbors++;
-  if(x != 0 && vec[y*row+(x-1)])
+  if(x != 0 && vec[x-1][y])
     numNeighbors++;
-  if(y != 0 && x != 0 && vec[(y-1)*row+(x-1)])
+  if(y != 0 && x != 0 && vec[x-1][y-1])
     numNeighbors++;
-  if(y != col && x != 0 && vec[(y+1)*row+(x-1)])
+  if(y != row && x != 0 && vec[x-1][y+1])
     numNeighbors++;
-  if(x != col && y != 0 && vec[(y-1)*row+(x+1)])
+  if(x != col && y != 0 && vec[x+1][y-1])
     numNeighbors++;
 
   return numNeighbors;
@@ -32,8 +32,8 @@ int main(){
   int col, line, turn;
   cin >> col >> line >> turn;
 
-  vector<bool> grid, tempGrid;
-  grid.resize(line*col);
+  vector<vector<bool>> grid(line, vector<bool>(col));
+  vector<vector<bool>> tempGrid;
 
   for(int y = 0; y < line; y++)
   {
@@ -42,9 +42,9 @@ int main(){
       char c;
       cin >> c;
       if(c == '#')
-        grid[y*line+x] = true;
+        grid[y][x] = true;
       else if(c == '.')
-        grid[y*line+x] = false;
+        grid[y][x] = false;
     }
   }
 
@@ -56,28 +56,30 @@ int main(){
     {
       for(int x = 0; x < col; x++)
       {
-        bool c = grid[y*line+x];
+        bool c = grid[y][x];
+        cout << c;
         int temp = neighbors(grid, x, y, line, col);
         if(c)
         {
           if(temp < 2)
-            tempGrid[y*line+x] = false;
+            tempGrid[y][x] = false;
           if(temp == 2 || temp == 3)
-            tempGrid[y*line+x] = true;
+            tempGrid[y][x] = true;
           if(temp > 3)
-            tempGrid[y*line+x] = false;
+            tempGrid[y][x] = false;
         }
         else
           if(temp == 3)
-            tempGrid[y*line+x] = true;
+            tempGrid[y][x] = true;
       }
+      cout << endl;
     }
     grid = tempGrid;
   }
 
   for(int y =0; y < line; y++) {
     for (int x = 0; x < col; x++) {
-      if (grid[y * line + x])
+      if (grid[y][x])
         cout << "#";
       else
         cout << ".";
