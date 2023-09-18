@@ -6,12 +6,19 @@ using namespace std;
 int neighbors(vector<bool> vec, int x, int y, int row, int col)
 {
   int numNeighbors = 0;
-  col = col-1;
-  if(x != col && vec[(y)*row+(x+1)])
+  //col = col-1;
+  //row = row-1;
+
+  if (x < 0) x += row;
+  if (x >= row) x %= row;
+  if (y < 0) y += col;
+  if (y >= col) y %= col;
+
+  if(x != row && vec[(y)*row+(x+1)])
     numNeighbors++;
   if(y != col && vec[(y+1)*row+x])
     numNeighbors++;
-  if(x != col && y != col && vec[(y+1)*row+(x+1)])
+  if(x != row && y != col && vec[(y+1)*row+(x+1)])
     numNeighbors++;
   if(y != 0 && vec[(y-1)*row+x])
     numNeighbors++;
@@ -21,7 +28,7 @@ int neighbors(vector<bool> vec, int x, int y, int row, int col)
     numNeighbors++;
   if(y != col && x != 0 && vec[(y+1)*row+(x-1)])
     numNeighbors++;
-  if(x != col && y != 0 && vec[(y-1)*row+(x+1)])
+  if(x != row && y != 0 && vec[(y-1)*row+(x+1)])
     numNeighbors++;
 
   return numNeighbors;
