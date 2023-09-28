@@ -5,9 +5,9 @@
 using namespace std;
 
 struct node{
+  bool visit = false;
   bool vert:1;
   bool hor:1;
-  bool visit;
 };
 
 int main(){
@@ -22,25 +22,31 @@ int main(){
   cin >> col >> row >> index;
   maze.resize(row*col);
 
-  for(int x = 0; x <= col; x++)
+  for(int y = 0; y <= col-1; y++)
   {
-    for(int y = 0; y <= row; y++)
-    {
-      maze[y*col+x].vert = false;
-      maze[y*col+x].hor = true;
-      //maze[(((y*col+x)+1)*2)+1] = '|';
+    for(int x = 0; x <= row-1; x++) {
+      if (x % 2 == 0 && y % 2 == 0) {
+        maze[y * col + x].vert = false;
+        maze[y * col + x].hor = false;
+      }
+      else if(x % 2 == 1)
+      {
+        maze[y * col + x].vert = false;
+        maze[y * col + x].hor = true;
+      }
+      else if(x % 2 == 0)
+      {
+        maze[y * col + x].vert = true;
+        maze[y * col + x].hor = false;
+      }
     }
   }
-
-  for(int x = 0; x <= col; x++)
+  cout << "  _" << endl;
+  for(int x = 0; x <= col-1; x++)
   {
-    for(int y = 0; y <= row; y++)
+    for(int y = 0; y <= row-1; y++)
     {
-      //cout << maze[y*col+x].vert <<  maze[y*col+x].hor;
-      if(!maze[y*col+x].vert)
-        cout << "|";
-      if( maze[y*col+x].hor)
-        cout << "_";
+      cout <<(maze[y*col+x].vert ? "|" : " ") << (maze[y*col+x].hor ? "_" : " ");
     }
     cout << endl;
   }
