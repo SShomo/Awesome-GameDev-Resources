@@ -9,25 +9,24 @@ struct node{
   bool visit = false;
   bool vert:1;
   bool hor:1;
+
+  int x;
+  int y;
 };
 
 vector<char> neighbors(const vector<node> vec, int x, int y, int col, int row){
-  int north = (col + y - 1) % col;
-  int south = (col + y + 1) % col;
-  int east = (row + x + 1) % row;
-  int west = (row + x - 1) % row;
   vector<char> numNeighbors; //Checks if the neighbors have been visited
   if(y > 0) //up
-    if(!vec[((north)*col+x)].visit)
+    if(!vec[((y-1)*col+x)].visit)
       numNeighbors.push_back('u');
-  if(y*col+(east) < row*col) //right
-    if(!vec[y*col+(east)].visit)
+  if(x + 1 < col) // right
+    if(!vec[y*col+(x+1)].visit)
       numNeighbors.push_back('r');
-  if((south)*col+x < row*col)//down
-    if(!vec[(south)*col+x].visit)
+  if(y + 1 < row)//down
+    if(!vec[(y+1)*col+x].visit)
       numNeighbors.push_back('d');
   if(x > 0)//left
-    if(!vec[(y*col+(west))].visit)
+    if(!vec[(y*col+(x-1))].visit)
       numNeighbors.push_back('l');
   return numNeighbors;
 }
@@ -47,9 +46,9 @@ int main(){
   maze.resize(row*col);
 
   //initial maze box generation (All walls are up)
-  for(int y = 0; y < col; y++)
+  for(int y = 0; y < row; y++)
   {
-    for(int x = 0; x < row; x++) {
+    for(int x = 0; x < col; x++) {
       maze[y * col + x].vert = true;
       maze[y * col + x].hor = true;
     }
@@ -57,30 +56,43 @@ int main(){
 
   //Add the top left cell to the stack;
   int tempX = 0, tempY = 0;
+  maze[tempY * col + tempX].x = tempX;
+  maze[tempY * col + tempX].y = tempY;
+  maze[tempY * col + tempX].visit = true; //Mark the top cell as visited;
   mazeStack.push(maze[tempY * col + tempX]);
   while(!mazeStack.empty()){
+    maze[tempY * col + tempX].visit = true;
+    tempX = mazeStack.top().x;
+    tempY = mazeStack.top().y;
     vector<char> numNeigh = neighbors(maze,tempX, tempY, col, row);
     if(!numNeigh.empty()){  //if  the stack top cell has visitable neighbors
-      maze[tempY * col + tempX].visit = true; //Mark the top cell as visited;
       if(numNeigh.size() == 1){
         if(numNeigh[0] == 'u'){
           tempY -= 1;
+          maze[tempY * col + tempX].x = tempX;
+          maze[tempY * col + tempX].y = tempY;
           maze[tempY*col+tempX].hor = false;
           mazeStack.push(maze[(tempY)*col+tempX]);
         }
         else if(numNeigh[0] == 'd'){
           maze[tempY*col+tempX].hor = false;
           tempY += 1;
+          maze[tempY * col + tempX].x = tempX;
+          maze[tempY * col + tempX].y = tempY;
           mazeStack.push(maze[(tempY)*col+tempX]);
         }
         else if (numNeigh[0] == 'l'){
           tempX -= 1;
+          maze[tempY * col + tempX].x = tempX;
+          maze[tempY * col + tempX].y = tempY;
           maze[tempY*col+tempX].vert = false;
           mazeStack.push(maze[(tempY)*col+tempX]);
         }
         else if(numNeigh[0] == 'r'){
           maze[tempY*col+tempX].vert = false;
           tempX += 1;
+          maze[tempY * col + tempX].x = tempX;
+          maze[tempY * col + tempX].y = tempY;
           mazeStack.push(maze[(tempY)*col+tempX]);
         }
       }
@@ -91,25 +103,34 @@ int main(){
           index = 0;
         if(numNeigh[temp] == 'u'){
           tempY -= 1;
+          maze[tempY * col + tempX].x = tempX;
+          maze[tempY * col + tempX].y = tempY;
           maze[tempY*col+tempX].hor = false;
           mazeStack.push(maze[(tempY)*col+tempX]);
         }
         if(numNeigh[temp] == 'r'){
           maze[tempY*col+tempX].vert = false;
           tempX += 1;
+          maze[tempY * col + tempX].x = tempX;
+          maze[tempY * col + tempX].y = tempY;
           mazeStack.push(maze[(tempY)*col+tempX]);
         }
         if(numNeigh[temp] == 'd'){
           maze[tempY*col+tempX].hor = false;
           tempY += 1;
+          maze[tempY * col + tempX].x = tempX;
+          maze[tempY * col + tempX].y = tempY;
           mazeStack.push(maze[(tempY)*col+tempX]);
         }
         if(numNeigh[temp] == 'l'){
           tempX -= 1;
+          maze[tempY * col + tempX].x = tempX;
+          maze[tempY * col + tempX].y = tempY;
           maze[tempY*col+tempX].vert = false;
           mazeStack.push(maze[(tempY)*col+tempX]);
         }
       }
+      numNeigh.clear();
     }
     else{
       mazeStack.pop();//Remove the top cell from the stack, backtracking
@@ -120,12 +141,13 @@ int main(){
     cout << " _";
   cout << "  " << endl;
 
-  for(int y = 0; y < col; y++){
+  for(int y = 0; y < row; y++){
     cout << "|";
-    for(int x = 0; x < row; x++){
+    for(int x = 0; x < col; x++){
       cout <<(maze[y*col+x].hor ? "_" : " ") << (maze[y*col+x].vert ? "|" : " ");
     }
     cout << " \n";
   }
+
   return 0;
 }
