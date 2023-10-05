@@ -51,6 +51,7 @@ int main() {
   int sideSize;
   int catX, catY;
   std::vector<bool> blocked;
+
   std::cin >> turn >> sideSize >> catX >> catY;
   blocked = readBoard(sideSize);
   // while(not win){ simulate; } // todo: create your own logic to test and simulate, check for win conditions etc.
